@@ -128,7 +128,7 @@ const LoginForm = () => {
                                 <input type="checkbox" id="remember" className="h-4 w-4 accent-[#FF5A1F] rounded border-gray-300" />
                                 <label htmlFor="remember" className="text-xs text-gray-500 font-medium">Remember Me</label>
                             </div>
-                            <Link href="/forgot-password" size={18} className="text-xs font-bold text-[#FF5A1F] hover:underline">Forgot Password?</Link>
+                            <Link href="/forgot-password" className="text-xs font-bold text-[#FF5A1F] hover:underline">Forgot Password?</Link>
                         </div>
 
                         <button 

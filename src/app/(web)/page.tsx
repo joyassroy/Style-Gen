@@ -1,7 +1,7 @@
 import Image from "next/image"
 import ShopByCategories from "@/components/pages/shop-by-categories"
 import FeaturedProducts from "@/components/pages/FeaturedProducts";
-import BrandStorySection from "@/components/BrandStorySection";
+
 
 export default function HomePage() {
   return (
@@ -25,7 +25,7 @@ export default function HomePage() {
       <FeaturedProducts />
       
       {/* Brand Story Section */}
-      <BrandStorySection />
+      
     </main>
   );
 }
