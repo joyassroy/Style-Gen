@@ -4,15 +4,18 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'ui-avatars.com',
+        hostname: 'lh3.googleusercontent.com', // গুগল প্রোফাইল ইমেজের জন্য
       },
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com', // আগের আনস্প্ল্যাশ ডোমেইনটিও এখানে রাখুন
+        hostname: 'ui-avatars.com', // ডিফল্ট অবতারের জন্য
       },
-      // যদি অন্য কোনো ডোমেইন থাকে সেগুলোও এখানে অ্যাড করুন
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com', // যদি আনস্প্ল্যাশ ইমেজ ব্যবহার করেন
+      },
     ],
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

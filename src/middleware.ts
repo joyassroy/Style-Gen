@@ -7,18 +7,24 @@ export default withAuth(
     const isAdmin = token?.role === "admin";
     const isAdminPage = req.nextUrl.pathname.startsWith("/admin");
 
-    // যদি ইউজার এডমিন পেজে যেতে চায় কিন্তু সে এডমিন না হয়
+    // যদি এডমিন না হয়ে এডমিন পেজে ঢোকার চেষ্টা করে
     if (isAdminPage && !isAdmin) {
       return NextResponse.redirect(new URL("/", req.url));
     }
   },
   {
     callbacks: {
-      authorized: ({ token }) => !!token, // লগইন করা থাকলেই শুধু চেক করবে
+      authorized: ({ token }) => !!token, // শুধু লগইন করা ইউজারদের জন্য
     },
   }
 );
 
+// এটি খুব গুরুত্বপূর্ণ! 
 export const config = {
-  matcher: ["/admin/:path*", "/u/:path*"], // এই এই পাথগুলো প্রোটেক্টেড থাকবে
+  matcher: [
+    "/admin/:path*", 
+    "/u/:path*",
+    '/((?!api|_next/static|_next/image|favicon.ico|login|register|$).*)',
+    // এখানে ভুলেও "/login" বা "/" দিবেন না
+  ],
 };

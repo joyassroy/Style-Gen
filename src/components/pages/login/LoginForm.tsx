@@ -24,45 +24,42 @@ const LoginForm = () => {
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError(""); 
-        setLoading(true);
+    e.preventDefault();
+    setError(""); 
+    setLoading(true);
 
-        try {
-            // ১. ক্রেডেনশিয়াল দিয়ে সাইন ইন করা
-            const res = await signIn("credentials", {
-                email,
-                password,
-                redirect: false, // আমরা ম্যানুয়ালি রিডাইরেক্ট করব
-            });
+    try {
+        const res = await signIn("credentials", {
+            email,
+            password,
+            redirect: false, 
+        });
 
-            if (res?.error) {
-                setError("ইমেইল বা পাসওয়ার্ড ভুল ভাই! আবার ট্রাই করেন।"); 
-            } else {
-                // ২. লগইন সফল হলে সেশন থেকে রোল চেক করা
-                const sessionRes = await fetch('/api/auth/session');
-                const session = await sessionRes.json();
-
-                // ৩. রোল অনুযায়ী রিডাইরেক্ট করা
-                if (session?.user?.role === 'admin') {
-                    router.push("/admin/dashboard"); 
-                } else {
-                    router.push("/u/dashboard"); 
-                }
-                
-                router.refresh(); 
-            }
-        } catch (error) {
-            setError("সার্ভারে ঝামেলা হচ্ছে। একটু পর আবার চেষ্টা করুন।");
-            console.error("Login error:", error);
-        } finally {
+        if (res?.error) {
+            setError("ইমেইল বা পাসওয়ার্ড ভুল ভাই!"); 
             setLoading(false);
-        }
-    };
+        } else {
+            // সেশন আপডেট হওয়ার জন্য ১ সেকেন্ড ওয়েট করা বা সরাসরি সেশন চেক করা
+            const sessionRes = await fetch('/api/auth/session');
+            const session = await sessionRes.json();
 
-    const handleGoogleLogin = () => {
-        signIn("google", { callbackUrl: "/u/dashboard" });
-    };
+            if (session?.user?.role === 'admin') {
+                window.location.href = "/admin/dashboard"; // Hard Redirect
+            } else {
+                window.location.href = "/u/dashboard"; // Hard Redirect
+            }
+        }
+    } catch (error) {
+        setError("সার্ভারে ঝামেলা হচ্ছে।");
+        setLoading(false);
+    }
+};
+
+    // LoginForm এর ভেতর handleGoogleLogin ফাংশনটি এভাবে আপডেট করুন:
+
+const handleGoogleLogin = async () => {
+    signIn("google", { callbackUrl: "/verify-user" });
+};
 
     return (
         <section className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#F9FAFB]">
