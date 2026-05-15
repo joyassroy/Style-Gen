@@ -9,6 +9,12 @@ const userSchema = new Schema({
   firstName: { type: String },
   lastName: { type: String },
   phone: { type: String },
+  
+  // এই রত্নটাই মিসিং ছিল!
+  role: { 
+    type: String, 
+    default: "user" // বাই-ডিফল্ট সবাই ইউজার হবে
+  },
 }, { timestamps: true });
 
 const User = models.User || mongoose.model("User", userSchema);

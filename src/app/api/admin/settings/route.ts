@@ -10,9 +10,11 @@ export async function GET() {
   try {
     await connectDB();
     const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== 'admin') return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    if (!session?.user || (session.user as any).role !== 'admin') {
+  return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+}
 
-    const admin = await User.findOne({ email: session.user.email });
+    const admin = await User.findOne({ email: session.user?.email });
     
     // Insights calculation
     const productCount = await Product.countDocuments();

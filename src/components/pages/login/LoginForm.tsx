@@ -7,7 +7,7 @@ import { MdOutlineEmail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { FcGoogle } from "react-icons/fc";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react"; 
 import { useRouter } from "next/navigation";
 
 const LoginForm = () => {
@@ -24,42 +24,45 @@ const LoginForm = () => {
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(""); 
-    setLoading(true);
+        e.preventDefault();
+        setError(""); 
+        setLoading(true);
 
-    try {
-        const res = await signIn("credentials", {
-            email,
-            password,
-            redirect: false, 
-        });
+        try {
+            const res = await signIn("credentials", {
+                email,
+                password,
+                redirect: false, 
+            });
 
-        if (res?.error) {
-            setError("ইমেইল বা পাসওয়ার্ড ভুল ভাই!"); 
-            setLoading(false);
-        } else {
-            // সেশন আপডেট হওয়ার জন্য ১ সেকেন্ড ওয়েট করা বা সরাসরি সেশন চেক করা
-            const sessionRes = await fetch('/api/auth/session');
-            const session = await sessionRes.json();
+            if (res?.error) {
+                setError("ইমেইল বা পাসওয়ার্ড ভুল ভাই!"); 
+                setLoading(false);
+                return;
+            } 
+            
+            const session = await getSession();
 
-            if (session?.user?.role === 'admin') {
-                window.location.href = "/admin/dashboard"; // Hard Redirect
+            // টাইপস্ক্রিপ্টের ঘাড়ত্যাড়ামি বন্ধ করা হলো এবং role বের করা হলো
+            const role = (session?.user as any)?.role || "";
+           
+            if (role.toLowerCase() === 'admin') {
+                window.location.replace("/admin/dashboard"); 
+            } else if (role.toLowerCase() === 'user') {
+                window.location.replace("/u/dashboard");
             } else {
-                window.location.href = "/u/dashboard"; // Hard Redirect
+                window.location.replace("/");
             }
+            
+        } catch (error) {
+            setError("সার্ভারে ঝামেলা হচ্ছে।");
+            setLoading(false);
         }
-    } catch (error) {
-        setError("সার্ভারে ঝামেলা হচ্ছে।");
-        setLoading(false);
-    }
-};
+    };
 
-    // LoginForm এর ভেতর handleGoogleLogin ফাংশনটি এভাবে আপডেট করুন:
-
-const handleGoogleLogin = async () => {
-    signIn("google", { callbackUrl: "/verify-user" });
-};
+    const handleGoogleLogin = async () => {
+        signIn("google", { callbackUrl: "/verify-user" });
+    };
 
     return (
         <section className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#F9FAFB]">

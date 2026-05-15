@@ -35,18 +35,19 @@ export const authOptions: AuthOptions = {
       if (account.provider === "google") {
         try {
           await connectDB();
-          const existingUser = await User.findOne({ email: user.email });
+          let existingUser = await User.findOne({ email: user.email });
           
-          // যদি নতুন ইউজার হয়, তাকে ডিফল্ট 'user' রোল দিয়ে সেভ করুন
           if (!existingUser) {
-            await User.create({
+            existingUser = await User.create({
               name: user.name,
               email: user.email,
               image: user.image,
               role: "user", 
             });
           }
-          user.role = existingUser?.role || "user"; // রোলটি সেশনে পাস করার জন্য সেট করুন
+          // ডাটাবেসের সঠিক রোল এবং আইডি user অবজেক্টে ঢুকিয়ে দিলাম
+          user.role = existingUser.role;
+          user.id = existingUser._id.toString();
           return true;
         } catch (error) {
           console.log(error);
@@ -56,11 +57,18 @@ export const authOptions: AuthOptions = {
       return true;
     },
     async jwt({ token, user }: any) {
-      if (user) token.role = user.role;
+      if (user) {
+        token.role = user.role;
+        token.id = user.id; // আইডিটাও টোকেনে রেখে দিলাম
+      }
       return token;
     },
     async session({ session, token }: any) {
-      if (session.user) session.user.role = token.role;
+      if (session.user) {
+        session.user.role = token.role;
+        
+        session.user.id = token.id;
+      }
       return session;
     },
   },

@@ -10,10 +10,13 @@ const VerifyUser = () => {
 
     useEffect(() => {
         if (status === "authenticated" && session?.user) {
-            // @ts-ignore
-            const role = session.user.role;
+           
+            // এই লাইনটা আপডেট করে নিন
+            const role = (session.user as any).role || "";
             
-            if (role === 'admin') {
+            console.log("Session Role:", role); // চেক করার জন্য
+            
+            if (role.toLowerCase() === 'admin') {
                 window.location.href = "/admin/dashboard";
             } else {
                 window.location.href = "/u/dashboard";
@@ -24,11 +27,9 @@ const VerifyUser = () => {
     }, [status, session, router]);
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-white">
-            <div className="flex flex-col items-center gap-4">
-                <div className="w-10 h-10 border-4 border-[#FF5A1F] border-t-transparent rounded-full animate-spin"></div>
-                <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">Verifying Identity...</p>
-            </div>
+        <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-4">
+            <div className="w-10 h-10 border-4 border-[#FF5A1F] border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">Routing...</p>
         </div>
     );
 };
